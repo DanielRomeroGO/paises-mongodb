@@ -24,7 +24,7 @@ def get_paises():
 
 #busca un usuario por id
 @app.route('/paises/<id>', methods=['GET'])
-def get_pais(id):
+def get_pais_id(id):
     paises = mongo.db.paises.find_one({'_id': ObjectId(id)})
     if paises:
         response = json_util.dumps(paises) # Strings con formato JSON
@@ -55,7 +55,7 @@ def create_pais():
     if 'diaNacional' in request_data:
         diaNacional_str = request.json['diaNacional']
         try:
-            diaNacional = datetime.strptime(diaNacional_str, '%Y-%m-%d').date()
+            diaNacional = datetime.strptime(diaNacional_str, '%Y-%m-%d')
         except ValueError:
             return dia_nacional_no_valido()
     else:
