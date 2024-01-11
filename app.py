@@ -23,9 +23,9 @@ def get_paises():
     return Response(response, mimetype='application/json') # Formato JSON
 
 #busca un usuario por id
-@app.route('/paises/<id>', methods=['GET'])
-def get_pais_id(id):
-    paises = mongo.db.paises.find_one({'_id': ObjectId(id)})
+@app.route('/paises/<nompais>', methods=['GET'])
+def get_pais_id(nompais):
+    paises = mongo.db.paises.find_one({'nompais': nompais})
     if paises:
         response = json_util.dumps(paises) # Strings con formato JSON
 
@@ -73,13 +73,13 @@ def create_pais():
     return response
 
 #elimina usuarios
-@app.route('/paises/<id>', methods=['DELETE'])
-def delete_pais(id):
-    paises = mongo.db.paises.find_one({'_id': ObjectId(id)})
+@app.route('/paises/<nompais>', methods=['DELETE'])
+def delete_pais(nompais):
+    paises = mongo.db.paises.find_one({'_id': ObjectId(nompais)})
 
     if paises: # Encontrado para ser eliminado
-        paisborrar = mongo.db.paises.delete_one({'_id': ObjectId(id)})
-        response = jsonify({'mensaje': 'Pais ' + id + 'fue eliminado satisfactoriamente'})
+        paisborrar = mongo.db.paises.delete_one({'_id': ObjectId(nompais)})
+        response = jsonify({'mensaje': nompais + 'fue eliminado satisfactoriamente'})
         return response
     else:
         return not_found()
@@ -93,8 +93,8 @@ def not_found(error=None):
     return response
 
 #modifica usuarios
-@app.route('/paises/<id>', methods=['PUT'])
-def update_pais(id):
+@app.route('/paises/<pais>', methods=['PUT'])
+def update_pais(pais):
     request_data = request.get_json()
     # Comprobando que se ha cada uno de los datos
     if 'nompais' in request_data:
@@ -122,9 +122,9 @@ def update_pais(id):
     else:
         return datos_incompletos()
     
-    pais = mongo.db.paises.find_one({'_id': ObjectId(id)})
-    if pais: # Encontrado para ser modificado
-        mongo.db.paises.update_one({'_id': ObjectId(id)}, {'$set':
+    paisBuscado = mongo.db.paises.find_one({'nompais': pais})
+    if paisBuscado: # Encontrado para ser modificado
+        mongo.db.paises.update_one({'nompais': pais}, {'$set':
         {
         'nompais': nompais,
         'capital': capital,
@@ -133,7 +133,7 @@ def update_pais(id):
         }})
     else:
         return not_found()
-    response = jsonify({'mensaje': 'Pais ' + id + ' fue actualizado satisfactoriamente'})
+    response = jsonify({'mensaje': pais + ' fue actualizado satisfactoriamente'})
     return response
 
 @app.errorhandler(404)
