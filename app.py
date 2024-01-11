@@ -15,7 +15,7 @@ app.config["MONGO_URI"] = 'mongodb+srv://daniromero:palomeras@cluster0.k5qwzob.m
 mongo = PyMongo(app)
 
 #obtiene todos los usuarios
-@app.route('/paises', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_paises():
     paises = mongo.db.paises.find()
     response = json_util.dumps(paises) # Strings con formato JSON
@@ -116,7 +116,7 @@ def update_pais(id):
     if 'diaNacional' in request_data:
         diaNacional_str = request.json['diaNacional']
         try:
-            diaNacional = datetime.strptime(diaNacional_str, '%Y-%m-%d').date()
+            diaNacional = datetime.strptime(diaNacional_str, '%Y-%m-%d')
         except ValueError:
             return dia_nacional_no_valido()
     else:
@@ -133,7 +133,7 @@ def update_pais(id):
         }})
     else:
         return not_found()
-    response = jsonify({'mensaje': 'Pais ' + id + 'fue actualizado satisfactoriamente'})
+    response = jsonify({'mensaje': 'Pais ' + id + ' fue actualizado satisfactoriamente'})
     return response
 
 @app.errorhandler(404)
